@@ -1,4 +1,4 @@
 .env/
 venv/
 .env
-**/my_graph*
+__pycache__/
