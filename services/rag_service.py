@@ -12,6 +12,16 @@ from langchain_core.vectorstores import InMemoryVectorStore
 
 class RAGService:
     def __init__(self, model, text_splitter, vectorstore_service, schema, queries=List[str]):
+        """
+        Initialize the RAG Service.
+
+        Args:
+            model: The model to use to generate text.
+            text_splitter: The text splitter to use to split the text into chunks.
+            vectorstore_service: The vector store service to use to store and retrieve chunks.
+            schema: The schema to use to validate the extracted information.
+            queries: The questions to ask the model to generate text.
+        """
         self.model = model
         self.text_splitter = text_splitter
         self.vectorstore_service = vectorstore_service
@@ -31,6 +41,12 @@ class RAGService:
 )
 
     def get_relevant_chunks(self) -> List[str]:
+        """
+        Get all the relevant chunks from the text for the given queries.
+
+        Returns:
+            List[str]: A list of all the relevant chunks from the text.
+        """
         retrieved_texts = []
         for query in self.queries:
             docs = self.retriever.get_relevant_documents(query)
@@ -38,6 +54,16 @@ class RAGService:
         return list(set(retrieved_texts))
 
     def run(self, file_path):
+        """
+        Processes a PDF file to extract relevant information based on predefined queries.
+
+        Args:
+            file_path (str): The path to the PDF file to be processed.
+
+        Returns:
+            dict: A dictionary containing the extracted information structured according to the defined schema.
+        """
+
         loader = PyPDFLoader(file_path)
         docs = loader.load()
         self.vectorstore = self.vectorstore_service.from_documents(docs, embedding=OpenAIEmbeddings(model="text-embedding-3-small"))
