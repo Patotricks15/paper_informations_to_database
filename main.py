@@ -1,20 +1,24 @@
 from services.db_service import *
 from services.rag_service import *
 from utils import *
+from dotenv import load_dotenv
 
+load_dotenv()
 
-file_path = "/home/patrick/langchain_pdf_mongodb/files/TD440.pdf"
+file_path = "/home/patrick/paper_informations_to_database/files/10.2478_s13533-012-0195-7.pdf"
 
+from typing import TypedDict, Annotated, Optional, List
 
-class PaperInformations(BaseModel):
-    title: Optional[str] = Field(default=None, description="The title of the paper")
-    authors: Optional[List] = Field(default=None, description="The authors of the paper")
-    date: Optional[str] = Field(default=None, description="The date of the paper")
-    abstract: Optional[str] = Field(default=None, description="The abstract of the paper")
-    keywords: Optional[List] = Field(default=None, description="The keywords of the paper")
-    techniques: Optional[List] = Field(default=None, description="Analyse and return the statistical techniques applied on the paper")
-    data_source: Optional[str] = Field(default=None, description="The data source of the paper")
-    citation: Optional[str] = Field(default=None, description="The citation in ABNT format, basically how to cite this paper, containing the authors names, the title and the year")
+class PaperInformations(TypedDict):
+    title: Annotated[Optional[str], "The title of the paper"]
+    authors: Annotated[Optional[List[str]], "The authors of the paper"]
+    date: Annotated[Optional[str], "The date of the paper"]
+    abstract: Annotated[Optional[str], "The abstract of the paper"]
+    keywords: Annotated[Optional[List[str]], "The keywords of the paper"]
+    techniques: Annotated[Optional[List[str]], "Analyse and return the statistical techniques applied on the paper"]
+    dataset_source: Annotated[Optional[str], "Where the data used in the paper comes from? It isn't the file path, it's the origin of the dataset"]
+    citation: Annotated[Optional[str], "The citation in ABNT format, basically how to cite this paper, containing the authors names, the title and the year"]
+
 
 selected_queries = [
     "The title of the paper",
@@ -30,8 +34,8 @@ selected_queries = [
 mongodb = MongoDBService("langchain_pdf_mongodb", "langchain_pdf_mongodb")
 
 rag = RAGService(
-    model=ChatOpenAI(model = "gpt-3.5-turbo-1106", temperature=0),
-    text_splitter=SemanticChunker(embeddings=OpenAIEmbeddings(model="text-embedding-3-small")),
+    model=ChatOpenAI(model = "gpt-4o-mini", temperature=0),
+    text_splitter=RecursiveCharacterTextSplitter(),
     vectorstore_service=Chroma,
     schema=PaperInformations,
     queries=selected_queries
@@ -41,6 +45,8 @@ rag = RAGService(
 result = rag.run(file_path)
 
 result = fix_unidecode(result)
+
+print(result)
 
 mongodb.insert_document(result)
 

@@ -11,7 +11,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter, TokenTextSp
 from langchain_core.vectorstores import InMemoryVectorStore
 
 class RAGService:
-    def __init__(self, model, text_splitter, vectorstore_service, schema, queries=List[str]):
+    def __init__(self, model, text_splitter, vectorstore_service, schema, queries):
         """
         Initialize the RAG Service.
 
@@ -31,8 +31,7 @@ class RAGService:
     [
         (
             "system",
-            "You are an expert extraction algorithm. "
-            "Only extract relevant information from the text. "
+            "You are an expert extraction algorithm. You will extract some informations from the text"
             "If you do not know the value of an attribute asked to extract, "
             "return null for the attribute's value.",
         ),
@@ -66,8 +65,8 @@ class RAGService:
 
         loader = PyPDFLoader(file_path)
         docs = loader.load()
-        self.vectorstore = self.vectorstore_service.from_documents(docs, embedding=OpenAIEmbeddings(model="text-embedding-3-small"))
         self.splits = self.text_splitter.split_documents(docs)
+        self.vectorstore = self.vectorstore_service.from_documents(self.splits, embedding=OpenAIEmbeddings(model="text-embedding-3-small"))
         self.retriever = self.vectorstore.as_retriever()
 
         # Creating the chain
@@ -76,9 +75,14 @@ class RAGService:
         relevant_chunks = self.get_relevant_chunks()
 
                 # Combine the chunks into a condensed text
-        reduced_text = " ".join(relevant_chunks)
+        #reduced_text = " ".join(relevant_chunks)
 
         # Execute the model on the condensed text
-        result = runnable.invoke({"text": reduced_text})
+
+        # Extractor
+        result = runnable.invoke(
+            [{"text": text} for text in relevant_chunks],
+            #{"max_concurrency": 5},  # limit the concurrency by passing max concurrency!
+        )
 
         return dict(result)
