@@ -2,10 +2,11 @@ from services.db_service import *
 from services.rag_service import *
 from utils import *
 from dotenv import load_dotenv
+from langchain_ollama import ChatOllama
 
 load_dotenv()
 
-file_path = "/home/patrick/paper_informations_to_database/files/10.2478_s13533-012-0195-7.pdf"
+file_path = "/home/patrick/paper_informations_to_database/files/TD440.pdf"
 
 from typing import TypedDict, Annotated, Optional, List
 

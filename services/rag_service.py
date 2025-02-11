@@ -9,6 +9,8 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_experimental.text_splitter import SemanticChunker
 from langchain_text_splitters import RecursiveCharacterTextSplitter, TokenTextSplitter
 from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_ollama import OllamaEmbeddings
+
 
 class RAGService:
     def __init__(self, model, text_splitter, vectorstore_service, schema, queries):
@@ -84,5 +86,6 @@ class RAGService:
             [{"text": text} for text in relevant_chunks],
             #{"max_concurrency": 5},  # limit the concurrency by passing max concurrency!
         )
-
+        print(result)
+        exit()
         return dict(result)
