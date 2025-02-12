@@ -1,5 +1,8 @@
 from pymongo import MongoClient
+import os
 
+mongo_uri = os.getenv("MONGO_URI", "mongodb://mongo:27017/")
+                             
 class MongoDBService:
     def __init__(self, database_name:str, collection_name:str):
         # Connect to the MongoDB server (adjust the URI if necessary)
@@ -9,7 +12,7 @@ class MongoDBService:
         :param database_name: The name of the MongoDB database to interact with.
         :param collection_name: The name of the MongoDB collection to interact with.
         """
-        self.client = MongoClient("mongodb://localhost:27017/")
+        self.client = MongoClient(mongo_uri)
 
         # Select the desired database (it will be created if it doesn't exist)
         self.db = self.client[database_name]

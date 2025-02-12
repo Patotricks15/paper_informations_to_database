@@ -86,6 +86,4 @@ class RAGService:
             [{"text": text} for text in relevant_chunks],
             #{"max_concurrency": 5},  # limit the concurrency by passing max concurrency!
         )
-        print(result)
-        exit()
         return dict(result)

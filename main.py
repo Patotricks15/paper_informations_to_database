@@ -6,7 +6,7 @@ from langchain_ollama import ChatOllama
 
 load_dotenv()
 
-file_path = "/home/patrick/paper_informations_to_database/files/TD440.pdf"
+file_path = "files/TD440.pdf"
 
 from typing import TypedDict, Annotated, Optional, List
 
