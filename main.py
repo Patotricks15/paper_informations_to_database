@@ -35,7 +35,7 @@ selected_queries = [
 mongodb = MongoDBService("langchain_pdf_mongodb", "langchain_pdf_mongodb")
 
 rag = RAGService(
-    model=ChatOpenAI(model = "gpt-4o-mini", temperature=0),
+    model=ChatOpenAI(model = "gpt-4o-mini", temperature=0), # gpt4o-mini are working well!
     text_splitter=RecursiveCharacterTextSplitter(),
     vectorstore_service=Chroma,
     schema=PaperInformations,
